@@ -132,6 +132,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.2+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -142,6 +149,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  group_radio_button:
+    dependency: "direct main"
+    description:
+      name: group_radio_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   http:
     dependency: transitive
     description:
@@ -157,7 +171,7 @@ packages:
     source: hosted
     version: "3.1.4"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dartlang.org"

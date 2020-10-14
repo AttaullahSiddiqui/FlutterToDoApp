@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:practice/models/user.dart';
+import 'package:practice/services/db.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -19,6 +20,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInAnonymously();
       User user = result.user;
+      Database(uid: user.uid);
       return _userObjectFromFirebase(user);
     } catch (e) {
       print(e.toString());
@@ -31,6 +33,7 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user;
+      Database(uid: user.uid);
       return _userObjectFromFirebase(user);
     } catch (e) {
       print(e.toString());
@@ -44,7 +47,9 @@ class AuthService {
           email: email, password: password);
       User user = result.user;
       print("User data from sign with email ");
-      print(user);
+      print(user.uid);
+      // await Database(uid: user.uid).addNewTodo("Code in Flutter");
+      Database(uid: user.uid);
       return _userObjectFromFirebase(user);
     } catch (e) {
       print(e.toString());

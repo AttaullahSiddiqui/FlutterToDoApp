@@ -3,6 +3,7 @@ import 'package:practice/models/user.dart';
 import 'package:practice/pages/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:practice/services/auth.dart';
+// import 'package:practice/shared/loaders.dart';
 import 'package:provider/provider.dart';
 
 // void main() {
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
             ),
           );
         }
-        return CircularProgressIndicator();
+        return Container(width: 0.0, height: 0.0);
       },
     );
   }

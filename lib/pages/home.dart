@@ -3,7 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:practice/models/todo.dart';
+// import 'package:practice/models/user.dart';
+import 'package:practice/pages/settings.dart';
+import 'package:practice/pages/todoList.dart';
 import 'package:practice/services/auth.dart';
+import 'package:practice/services/db.dart';
+import 'package:provider/provider.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -20,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final AuthService _auth = AuthService();
   String todo;
   String createdAt;
+  String filterVal = "All";
   CollectionReference users = FirebaseFirestore.instance.collection('todos');
 
   Future<void> addUser() {
@@ -33,8 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
-  int _counter = 0;
-  // String _dummyTxt = "xxxx";
   final myController = TextEditingController();
   final myController2 = TextEditingController();
 
@@ -44,17 +49,30 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     _counter++;
-  //   });
-  // }
-
-  void getString() {
-    // presentDialog(myController.text);
-    // setState(() {
-    //   _dummyTxt = myController.text;
-    // });
+  void _showSettingsModal() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
+              child: Column(
+                children: [
+                  Text(
+                    "Select an Option:",
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(
+                    height: 50.0,
+                  ),
+                  FilterForm(
+                      singleValue: filterVal,
+                      callback: (val) => setState(() {
+                            filterVal = val;
+                            print(filterVal);
+                          })),
+                ],
+              ));
+        });
   }
 
   void presentDialog(String exc) {
@@ -108,8 +126,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: 200.0,
                       height: 50.0,
                       child: RaisedButton(
-                        // onPressed: () {},
-                        onPressed: addUser,
+                        onPressed: () async {
+                          if (myController.text.trim().isEmpty) return;
+                          dynamic addResult =
+                              await Database().addNewTodo(myController.text);
+                          if (addResult == null) {
+                            print("Error adding new Todo");
+                          } else {
+                            print("Congratulations");
+                            Navigator.pop(context);
+                            myController.clear();
+                          }
+                        },
                         child: Text(
                           "Add",
                           style: TextStyle(color: Colors.white, fontSize: 18.0),
@@ -130,55 +158,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-            title: Container(
-                alignment: Alignment.center, child: Text(widget.title)),
-            actions: <Widget>[
-              FlatButton.icon(
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    "Logout",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () async {
-                    await _auth.signOut();
-                  })
-            ]),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              Divider(
-                color: Colors.green,
-              ),
-              Text(
-                'Huurrraahhhh....I have learnt Flutter',
-              ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline2,
-              ),
-            ],
+    return StreamProvider<List<Todo>>.value(
+      value: Database().allTodos,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+              title: Container(
+                  alignment: Alignment.center, child: Text(widget.title)),
+              actions: <Widget>[
+                IconButton(
+                    icon: Icon(
+                      Icons.settings_outlined,
+                      color: Colors.white,
+                      size: 30.0,
+                    ),
+                    onPressed: () => _showSettingsModal()),
+                IconButton(
+                    icon: Icon(
+                      Icons.exit_to_app_rounded,
+                      color: Colors.white,
+                      size: 30.0,
+                    ),
+                    onPressed: () async {
+                      await _auth.signOut();
+                    })
+              ]),
+          body: Center(child: TodoList()),
+          floatingActionButton: FloatingActionButton(
+            // onPressed: _incrementCounter,
+            onPressed: customDialog,
+            tooltip: 'Add Todo',
+            child: Icon(Icons.add),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          // onPressed: _incrementCounter,
-          onPressed: customDialog,
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
