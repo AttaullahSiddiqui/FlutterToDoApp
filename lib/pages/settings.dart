@@ -5,20 +5,17 @@ import 'package:practice/shared/styles.dart';
 class FilterForm extends StatefulWidget {
   String singleValue;
   Function callback;
+
   FilterForm({Key key, this.singleValue, this.callback}) : super(key: key);
+
   @override
   _FilterFormState createState() => _FilterFormState();
 }
-
-// String _selectedVal = "Pending";
-// String _singleValue = s;
 
 class _FilterFormState extends State<FilterForm> {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-    int _stackIndex = 0;
-    // List<RadioModel> sampleData = new List<RadioModel>();
 
     List<String> radioValues = ["All", "Pending", "Completed"];
 

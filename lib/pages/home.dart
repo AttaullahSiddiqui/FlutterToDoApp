@@ -1,10 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:practice/models/todo.dart';
-// import 'package:practice/models/user.dart';
 import 'package:practice/pages/settings.dart';
 import 'package:practice/pages/todoList.dart';
 import 'package:practice/services/auth.dart';
@@ -30,7 +28,6 @@ class _MyHomePageState extends State<MyHomePage> {
   CollectionReference users = FirebaseFirestore.instance.collection('todos');
 
   Future<void> addUser() {
-    // Call the user's CollectionReference to add a new user
     return users
         .add({
           'todo': 'todo',
@@ -145,7 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.pink,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)),
-                        // color: const Color(0xFF1BC0C5),
                       ),
                     )
                   ],
@@ -183,9 +179,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       await _auth.signOut();
                     })
               ]),
-          body: Center(child: TodoList()),
+          body: Center(child: TodoList(singleValue: filterVal)),
           floatingActionButton: FloatingActionButton(
-            // onPressed: _incrementCounter,
             onPressed: customDialog,
             tooltip: 'Add Todo',
             child: Icon(Icons.add),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:intl/intl.dart';
 import 'package:practice/models/todo.dart';
 import 'package:practice/pages/todosTile.dart';
-// import 'package:practice/services/db.dart';
 import 'package:provider/provider.dart';
 
 class TodoList extends StatefulWidget {
+  String singleValue;
+  TodoList({Key key, this.singleValue}) : super(key: key);
   @override
   _TodoListState createState() => _TodoListState();
 }
@@ -16,10 +15,12 @@ class _TodoListState extends State<TodoList> {
   Widget build(BuildContext context) {
     final todos = Provider.of<List<Todo>>(context) ?? [];
 
+    print(todos);
+
     return ListView.builder(
       itemCount: todos.length,
       itemBuilder: (context, index) {
-        return TodoTile(todo: todos[index]);
+        return TodoTile(todo: todos[index], filterVal: widget.singleValue);
       },
     );
 
