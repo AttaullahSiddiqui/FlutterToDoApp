@@ -8,6 +8,7 @@ import 'package:practice/pages/todoList.dart';
 import 'package:practice/services/auth.dart';
 import 'package:practice/services/db.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -24,18 +25,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final AuthService _auth = AuthService();
   String todo;
   String createdAt;
-  String filterVal = "All";
-  CollectionReference users = FirebaseFirestore.instance.collection('todos');
-
-  Future<void> addUser() {
-    return users
-        .add({
-          'todo': 'todo',
-          'createdAt': 'company',
-        })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
-  }
+  String filterVal = "Pending";
+  bool addingTodo = false;
 
   final myController = TextEditingController();
   final myController2 = TextEditingController();
@@ -70,18 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ));
         });
-  }
-
-  void presentDialog(String exc) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Alert Dialog"),
-          content: Text(exc),
-        );
-      },
-    );
   }
 
   void customDialog() {
@@ -124,13 +103,20 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 50.0,
                       child: RaisedButton(
                         onPressed: () async {
-                          if (myController.text.trim().isEmpty) return;
+                          if (myController.text.trim().isEmpty || addingTodo)
+                            return;
+                          addingTodo = true;
                           dynamic addResult =
                               await Database().addNewTodo(myController.text);
                           if (addResult == null) {
-                            print("Error adding new Todo");
+                            // print("Error adding new Todo");
+                            addingTodo = false;
+                            Fluttertoast.showToast(
+                                msg: "Error adding new Todo");
                           } else {
-                            print("Congratulations");
+                            addingTodo = false;
+                            Fluttertoast.showToast(
+                                msg: "Todo added successfully");
                             Navigator.pop(context);
                             myController.clear();
                           }

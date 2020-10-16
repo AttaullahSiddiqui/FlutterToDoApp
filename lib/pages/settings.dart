@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:practice/shared/styles.dart';
-// import 'package:group_radio_button/group_radio_button.dart';
 
 class FilterForm extends StatefulWidget {
   String singleValue;
@@ -22,20 +22,7 @@ class _FilterFormState extends State<FilterForm> {
     return Form(
       key: _formKey,
       child: Column(
-        // padding: EdgeInsets.only(left: 50.0),
         children: <Widget>[
-          // Transform.scale(
-          //   scale: 1.5,
-          //   child: RadioGroup<String>.builder(
-          //     groupValue: _selectedVal,
-          //     onChanged: (value) => setState(() {
-          //       _selectedVal = value;
-          //       print(_selectedVal);
-          //     }),
-          //     items: radioValues,
-          //     itemBuilder: (item) => RadioButtonBuilder(item),
-          //   ),
-          // ),
           DropdownButtonFormField(
             value: widget.singleValue,
             decoration: AuthInputDecoration,
@@ -51,6 +38,7 @@ class _FilterFormState extends State<FilterForm> {
           OutlineButton(
             onPressed: () {
               Navigator.of(context).pop(widget.callback(widget.singleValue));
+              Fluttertoast.showToast(msg: "List updated");
             },
             color: Colors.pink,
             borderSide: BorderSide(width: 3.0, color: Colors.pink),

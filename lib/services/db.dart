@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:practice/models/todo.dart';
 
 class Database {
@@ -11,7 +12,6 @@ class Database {
 
   Future addNewTodo(String todo) async {
     String userId = await getUid();
-    print(userId);
     return await toDoCollection.add({
       'todo': todo,
       'completed': false,
@@ -25,9 +25,26 @@ class Database {
     return user.uid;
   }
 
+  Future editTodo(String todoID, bool completed) async {
+    return await toDoCollection
+        .doc(todoID)
+        .update({'completed': completed}).then((result) {
+      Fluttertoast.showToast(msg: "Todo updated successfully");
+      // print("Todo updated successfully");
+    }).catchError((onError) {
+      Fluttertoast.showToast(msg: "Error updating Todo");
+      // print("Error updating Todo");
+    });
+  }
+
+  Future deleteTodo(String todoID) async {
+    return await toDoCollection.doc(todoID).delete();
+  }
+
   Stream<List<Todo>> get allTodos {
     String userId = getUid();
     return toDoCollection
+        .orderBy('timestamp')
         .where('uid', isEqualTo: userId)
         .snapshots()
         .map(todoListSnapshot);
@@ -38,25 +55,9 @@ class Database {
       return Todo(
           todo: doc.data()['todo'] ?? '',
           completed: doc.data()['completed'] ?? false,
-          uid: doc.data()['uid'] ?? '0');
+          uid: doc.data()['uid'] ?? '0',
+          timestamp: doc.data()['timestamp'] ?? '0',
+          todoID: doc.id);
     }).toList();
   }
-
-  // Future<DocumentSnapshot> getTodos() async {
-  //   String userId = getUid();
-  //   return await toDoCollection.doc(userId).get();
-  // }
-
-  // Future<void> getTodos() async {
-  //   QuerySnapshot querySnapshot = await toDoCollection.get();
-
-  //   print('###########s result ${querySnapshot.docs}');
-
-  //   if (querySnapshot != null) {
-  //     for (int i = 0; i < querySnapshot.docs.length; i++) {
-  //       var a = querySnapshot.docs[i];
-  //       print(a.id);
-  //     }
-  //   }
-  // }
 }

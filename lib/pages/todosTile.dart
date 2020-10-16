@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:practice/models/todo.dart';
+import 'package:practice/services/db.dart';
 
 class TodoTile extends StatelessWidget {
   final Todo todo;
   final filterVal;
   TodoTile({this.todo, this.filterVal});
   bool trigger = false;
-  var _tapposition;
 
   @override
   Widget build(BuildContext context) {
-    _showCustomMenu() {
-      final RenderBox overlay = Overlay.of(context).context.findRenderObject();
-      showMenu(
-          context: context,
-          position: new RelativeRect.fromRect(
-              _tapposition & Size(40, 40), Offset.zero & overlay.size),
-          items: <PopupMenuItem<String>>[
-            const PopupMenuItem<String>(
-                child: Text('Mark as Completed'), value: 'Mark as Completed'),
-            const PopupMenuItem<String>(child: Text('Delete'), value: 'Delete'),
-          ]);
-    }
+    updateCompleteStatus(bool chng) => Database().editTodo(todo.todoID, chng);
+    deleteTodo() => Database().deleteTodo(todo.todoID);
 
-    void _storePosition(TapDownDetails details) {
-      _tapposition = details.globalPosition;
-    }
+    popUpmenu() {}
+    final popUpMenu = PopupMenuButton(
+      onSelected: (result) {
+        if (result == 'delete')
+          deleteTodo();
+        else if (result == 'completed')
+          updateCompleteStatus(true);
+        else if (result == 'pending') updateCompleteStatus(false);
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+        todo.completed == false
+            ? PopupMenuItem(
+                value: "completed",
+                child: Text('Mark as Completed'),
+              )
+            : const PopupMenuItem(
+                value: "pending",
+                child: Text('Mark as Pending'),
+              ),
+        const PopupMenuItem(
+          value: "delete",
+          child: Text('Delete'),
+        ),
+      ],
+    );
 
     switch (filterVal) {
       case "All":
@@ -38,6 +51,9 @@ class TodoTile extends StatelessWidget {
         if (todo.completed) trigger = true;
         break;
     }
+    String todoTime = DateFormat.yMMMd()
+        .add_jm()
+        .format(new DateTime.fromMicrosecondsSinceEpoch(todo.timestamp * 1000));
     return trigger == true
         ? Padding(
             padding: const EdgeInsets.only(top: 8.0),
@@ -50,11 +66,8 @@ class TodoTile extends StatelessWidget {
                   backgroundImage: AssetImage('assets/images/aa.png'),
                 ),
                 title: Text(todo.todo),
-                subtitle: Text("hahaha"),
-                trailing: new GestureDetector(
-                    child: Icon(Icons.more_vert),
-                    onTap: () => _showCustomMenu(),
-                    onTapDown: _storePosition),
+                subtitle: Text(todoTime),
+                trailing: popUpMenu,
               ),
             ),
           )
