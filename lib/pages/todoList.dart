@@ -3,6 +3,7 @@ import 'package:practice/models/todo.dart';
 import 'package:practice/pages/todosTile.dart';
 import 'package:provider/provider.dart';
 
+//ignore: must_be_immutable
 class TodoList extends StatefulWidget {
   String singleValue;
   TodoList({Key key, this.singleValue}) : super(key: key);

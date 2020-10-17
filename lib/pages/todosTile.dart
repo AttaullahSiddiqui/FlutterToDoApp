@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:practice/models/todo.dart';
 import 'package:practice/services/db.dart';
 
+//ignore: must_be_immutable
 class TodoTile extends StatelessWidget {
   final Todo todo;
   final filterVal;
@@ -14,7 +15,6 @@ class TodoTile extends StatelessWidget {
     updateCompleteStatus(bool chng) => Database().editTodo(todo.todoID, chng);
     deleteTodo() => Database().deleteTodo(todo.todoID);
 
-    popUpmenu() {}
     final popUpMenu = PopupMenuButton(
       onSelected: (result) {
         if (result == 'delete')

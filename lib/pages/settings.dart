@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:practice/shared/styles.dart';
 
+//ignore: must_be_immutable
 class FilterForm extends StatefulWidget {
   String singleValue;
   Function callback;

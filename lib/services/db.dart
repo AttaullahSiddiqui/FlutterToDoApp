@@ -44,7 +44,7 @@ class Database {
   Stream<List<Todo>> get allTodos {
     String userId = getUid();
     return toDoCollection
-        .orderBy('timestamp')
+        // .orderBy('timestamp')
         .where('uid', isEqualTo: userId)
         .snapshots()
         .map(todoListSnapshot);
